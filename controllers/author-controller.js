@@ -35,7 +35,7 @@ exports.author_detail = function (req, res) {
       } // Error in API usage.
       if (results.author == null) {
         // No results.
-        var err = new Error("Author not found");
+        const err = new Error("Author not found");
         err.status = 404;
         return next(err);
       }
