@@ -8,11 +8,14 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const catalogRouter = require('./routes/catalog');
 
+// For env variable DB_URL
+require('dotenv').config();
+
 var app = express();
 
 // Set up mongoose connection
 const mongoose = require('mongoose');
-const mongoDB = "mongodb+srv://locallibrary:projectlocallibrary@cluster0.p2nzv.mongodb.net/local_library?retryWrites=true&w=majority";
+const mongoDB = process.env.DB_CONNECTION_STRING;
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
