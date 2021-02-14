@@ -10,7 +10,7 @@ const { routes } = require("../app");
 
 // Require validator modules.
 const genre_validator = require("../validators/genre-validator");
-
+const author_validator = require("../validators/author-validator");
 /// BOOK ROUTES ///
 
 // GET catalog home page.
@@ -46,7 +46,7 @@ router.get("/books", book_controller.book_list);
 router.get("/author/create", author_controller.author_create_get);
 
 // POST request for creating Author.
-router.post("/author/create", author_controller.author_create_post);
+router.post("/author/create", author_validator.author_create, author_controller.author_create_post);
 
 // GET request to delete Author.
 router.get("/author/:id/delete", author_controller.author_delete_get);

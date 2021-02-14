@@ -1,4 +1,5 @@
 const async = require("async");
+const { validationResult } = require("express-validator");
 const Author = require("../models/author");
 const Book = require("../models/book");
 
@@ -19,7 +20,7 @@ exports.author_list = function (req, res, next) {
 };
 
 // Display detail page for a specific Author.
-exports.author_detail = function (req, res) {
+exports.author_detail = function (req, res, next) {
   async.parallel(
     {
       author: function (callback) {
@@ -51,12 +52,41 @@ exports.author_detail = function (req, res) {
 
 // Display Author create form on GET.
 exports.author_create_get = function (req, res) {
-  res.send("NOT IMPLEMENTED: Author create GET");
+  res.render("author_form", { title: "Create Author" });
 };
 
 // Handle Author create on POST.
-exports.author_create_post = function (req, res) {
-  res.send("NOT IMPLEMENTED: Author create POST");
+exports.author_create_post = function (req, res, next) {
+  // Extract the validation errors from a request.
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    // There are errors. Render form again with sanitized values/errors messages.
+    res.render("author_form", {
+      title: "Create Author",
+      author: req.body,
+      errors: errors.array(),
+    });
+    return;
+  } else {
+    // Data from form is valid.
+
+    // Create an Author object with escaped and trimmed data.
+    const author = new Author({
+      first_name: req.body.first_name,
+      family_name: req.body.family_name,
+      date_of_birth: req.body.date_of_birth,
+      date_of_death: req.body.date_of_death,
+    });
+    author.save(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      // Successful - redirect to new author record.
+      res.redirect(author.url);
+    });
+  }
 };
 
 // Display Author delete form on GET.
