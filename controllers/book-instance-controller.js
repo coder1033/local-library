@@ -1,4 +1,6 @@
+const Book = require("../models/book");
 const BookInstance = require("../models/bookinstance");
+const { validationResult } = require("express-validator");
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {
@@ -17,7 +19,7 @@ exports.bookinstance_list = function (req, res, next) {
 };
 
 // Display detail page for a specific BookInstance.
-exports.bookinstance_detail = function (req, res) {
+exports.bookinstance_detail = function (req, res, next) {
   BookInstance.findById(req.params.id)
     .populate("book")
     .exec(function (err, bookinstance) {
@@ -39,13 +41,58 @@ exports.bookinstance_detail = function (req, res) {
 };
 
 // Display BookInstance create form on GET.
-exports.bookinstance_create_get = function (req, res) {
-  res.send("NOT IMPLEMENTED: BookInstance create GET");
+exports.bookinstance_create_get = function (req, res, next) {
+  Book.find({}, "title").exec(function (err, books) {
+    if (err) {
+      return next(err);
+    }
+    // Successful, so render.
+    res.render("bookinstance_form", {
+      title: "Create BookInstance",
+      book_list: books,
+    });
+  });
 };
 
 // Handle BookInstance create on POST.
-exports.bookinstance_create_post = function (req, res) {
-  res.send("NOT IMPLEMENTED: BookInstance create POST");
+exports.bookinstance_create_post = function (req, res, next) {
+  // Extract the validation errors from a request.
+  const errors = validationResult(req);
+
+  // Create a BookInstance object with escaped and trimmed data.
+  const bookinstance = new BookInstance({
+    book: req.body.book,
+    imprint: req.body.imprint,
+    status: req.body.status,
+    due_back: req.body.due_back,
+  });
+
+  if (!errors.isEmpty()) {
+    // There are errors. Render form again with sanitized values and error messages.
+    Book.find({}, "title").exec(function (err, books) {
+      if (err) {
+        return next(err);
+      }
+      // Successful, so render.
+      res.render("bookinstance_form", {
+        title: "Create BookInstance",
+        book_list: books,
+        selected_book: bookinstance.book._id,
+        errors: errors.array(),
+        bookinstance: bookinstance,
+      });
+    });
+    return;
+  } else {
+    // Data from form is valid.
+    bookinstance.save(function (err) {
+      if (err) {
+        return next(err);
+      }
+      // Successful - redirect to new record.
+      res.redirect(bookinstance.url);
+    });
+  }
 };
 
 // Display BookInstance delete form on GET.
