@@ -39,7 +39,7 @@ router.post("/book/:id/delete", book_controller.book_delete_post);
 router.get("/book/:id/update", book_controller.book_update_get);
 
 // POST request to update Book.
-router.post("/book/:id/update", book_controller.book_update_post);
+router.post("/book/:id/update", book_validator.book_create, book_controller.book_update_post);
 
 // GET request for one Book.
 router.get("/book/:id", book_controller.book_detail);
