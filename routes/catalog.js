@@ -11,6 +11,7 @@ const { routes } = require("../app");
 // Require validator modules.
 const genre_validator = require("../validators/genre-validator");
 const author_validator = require("../validators/author-validator");
+const book_validator = require("../validators/book-validator");
 /// BOOK ROUTES ///
 
 // GET catalog home page.
@@ -20,7 +21,7 @@ router.get("/", book_controller.index);
 router.get("/book/create", book_controller.book_create_get);
 
 // POST request for creating Book.
-router.post("/book/create", book_controller.book_create_post);
+router.post("/book/create", book_validator.book_create, book_controller.book_create_post);
 
 // GET request to delete Book.
 router.get("/book/:id/delete", book_controller.book_delete_get);
