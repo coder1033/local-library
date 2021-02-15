@@ -143,6 +143,7 @@ router.get(
 // POST request to update BookInstance.
 router.post(
   "/bookinstance/:id/update",
+  book_instance_validator.book_instance_create,
   book_instance_controller.bookinstance_update_post
 );
 
