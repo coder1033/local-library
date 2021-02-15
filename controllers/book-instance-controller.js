@@ -24,7 +24,8 @@ exports.bookinstance_list = function (req, res, next) {
 
 // Display detail page for a specific BookInstance.
 exports.bookinstance_detail = function (req, res, next) {
-  BookInstance.findById(req.params.id)
+  const { id } = req.params;
+  BookInstance.findById(id)
     .populate("book")
     .exec(function (err, bookinstance) {
       if (err) {
@@ -60,15 +61,16 @@ exports.bookinstance_create_get = function (req, res, next) {
 
 // Handle BookInstance create on POST.
 exports.bookinstance_create_post = function (req, res, next) {
+  const { book, imprint, status, due_back } = req.body;
   // Extract the validation errors from a request.
   const errors = validationResult(req);
 
   // Create a BookInstance object with escaped and trimmed data.
   const bookinstance = new BookInstance({
-    book: req.body.book,
-    imprint: req.body.imprint,
-    status: req.body.status,
-    due_back: req.body.due_back,
+    book,
+    imprint,
+    status,
+    due_back,
   });
 
   if (!errors.isEmpty()) {
@@ -101,7 +103,8 @@ exports.bookinstance_create_post = function (req, res, next) {
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = function (req, res, next) {
-  BookInstance.findById(req.params.id)
+  const { id } = req.params;
+  BookInstance.findById(id)
     .populate("book")
     .exec(function (err, result) {
       if (err) {
@@ -121,8 +124,9 @@ exports.bookinstance_delete_get = function (req, res, next) {
 
 // Handle BookInstance delete on POST.
 exports.bookinstance_delete_post = function (req, res, next) {
+  const { bookinstanceid } = req.body;
   BookInstance.findByIdAndRemove(
-    req.body.bookinstanceid,
+    bookinstanceid,
     function deleteBookInstance(err) {
       if (err) {
         return next(err);
@@ -135,11 +139,12 @@ exports.bookinstance_delete_post = function (req, res, next) {
 
 // Display BookInstance update form on GET.
 exports.bookinstance_update_get = function (req, res, next) {
+  const { id } = req.params;
   // Get book, authors and genres for form.
   async.parallel(
     {
       bookinstance: function (callback) {
-        BookInstance.findById(req.params.id).exec(callback);
+        BookInstance.findById(id).exec(callback);
       },
       books: function (callback) {
         Book.find({}, "title").exec(callback);
@@ -168,16 +173,18 @@ exports.bookinstance_update_get = function (req, res, next) {
 
 // Handle bookinstance update on POST.
 exports.bookinstance_update_post = function (req, res, next) {
+  const { id } = req.params;
+  const { book, imprint, status, due_back } = req.body;
   // Extract the validation errors from a request.
   const errors = validationResult(req);
 
   // Create a BookInstance object with escaped/trimmed data and current id.
   const bookinstance = new BookInstance({
-    book: req.body.book,
-    imprint: req.body.imprint,
-    status: req.body.status,
-    due_back: req.body.due_back,
-    _id: req.params.id,
+    book,
+    imprint,
+    status,
+    due_back,
+    _id: id,
   });
 
   if (!errors.isEmpty()) {
@@ -199,7 +206,7 @@ exports.bookinstance_update_post = function (req, res, next) {
   } else {
     // Data from form is valid.
     BookInstance.findByIdAndUpdate(
-      req.params.id,
+      id,
       bookinstance,
       {},
       function (err, thebookinstance) {

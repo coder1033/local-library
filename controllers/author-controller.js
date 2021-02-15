@@ -24,13 +24,14 @@ exports.author_list = function (req, res, next) {
 
 // Display detail page for a specific Author.
 exports.author_detail = function (req, res, next) {
+  const { id } = req.params;
   async.parallel(
     {
       author: function (callback) {
-        Author.findById(req.params.id).exec(callback);
+        Author.findById(id).exec(callback);
       },
       authors_books: function (callback) {
-        Book.find({ author: req.params.id }, "title summary").exec(callback);
+        Book.find({ author: id }, "title summary").exec(callback);
       },
     },
     function (err, results) {
@@ -60,6 +61,8 @@ exports.author_create_get = function (req, res) {
 
 // Handle Author create on POST.
 exports.author_create_post = function (req, res, next) {
+  const { first_name, family_name, date_of_birth, date_of_death } = req.body;
+
   // Extract the validation errors from a request.
   const errors = validationResult(req);
 
@@ -76,10 +79,10 @@ exports.author_create_post = function (req, res, next) {
 
     // Create an Author object with escaped and trimmed data.
     const author = new Author({
-      first_name: req.body.first_name,
-      family_name: req.body.family_name,
-      date_of_birth: req.body.date_of_birth,
-      date_of_death: req.body.date_of_death,
+      first_name,
+      family_name,
+      date_of_birth,
+      date_of_death,
     });
     author.save(function (err) {
       if (err) {
@@ -94,13 +97,14 @@ exports.author_create_post = function (req, res, next) {
 
 // Display Author delete form on GET.
 exports.author_delete_get = function (req, res, next) {
+  const { id } = req.params;
   async.parallel(
     {
       author: function (callback) {
-        Author.findById(req.params.id).exec(callback);
+        Author.findById(id).exec(callback);
       },
       authors_books: function (callback) {
-        Book.find({ author: req.params.id }).exec(callback);
+        Book.find({ author: id }).exec(callback);
       },
     },
     function (err, results) {
@@ -123,13 +127,14 @@ exports.author_delete_get = function (req, res, next) {
 
 // Handle Author delete on POST.
 exports.author_delete_post = function (req, res, next) {
+  const { authorid } = req.body;
   async.parallel(
     {
       author: function (callback) {
-        Author.findById(req.body.authorid).exec(callback);
+        Author.findById(authorid).exec(callback);
       },
       authors_books: function (callback) {
-        Book.find({ author: req.body.authorid }).exec(callback);
+        Book.find({ author: authorid }).exec(callback);
       },
     },
     function (err, results) {
@@ -147,7 +152,7 @@ exports.author_delete_post = function (req, res, next) {
         return;
       } else {
         // Author has no books. Delete object and redirect to the list of authors.
-        Author.findByIdAndRemove(req.body.authorid, function deleteAuthor(err) {
+        Author.findByIdAndRemove(authorid, function deleteAuthor(err) {
           if (err) {
             return next(err);
           }
@@ -161,7 +166,8 @@ exports.author_delete_post = function (req, res, next) {
 
 // Display Author update form on GET.
 exports.author_update_get = function (req, res, next) {
-  Author.findById(req.params.id, function (err, author) {
+  const { id } = req.params;
+  Author.findById(id, function (err, author) {
     if (err) {
       return next(err);
     }
@@ -178,16 +184,19 @@ exports.author_update_get = function (req, res, next) {
 
 // Handle Author update on POST.
 exports.author_update_post = function (req, res, next) {
+  const { id } = req.params;
+  const { first_name, family_name, date_of_birth, date_of_death } = req.body;
+
   // Extract the validation errors from a request.
   const errors = validationResult(req);
 
   // Create Author object with escaped and trimmed data (and the old id!)
   const author = new Author({
-    first_name: req.body.first_name,
-    family_name: req.body.family_name,
-    date_of_birth: req.body.date_of_birth,
-    date_of_death: req.body.date_of_death,
-    _id: req.params.id,
+    first_name,
+    family_name,
+    date_of_birth,
+    date_of_death,
+    _id: id,
   });
 
   if (!errors.isEmpty()) {
@@ -201,7 +210,7 @@ exports.author_update_post = function (req, res, next) {
   } else {
     // Data from form is valid. Update the record.
     Author.findByIdAndUpdate(
-      req.params.id,
+      id,
       author,
       {},
       function (err, theauthor) {
