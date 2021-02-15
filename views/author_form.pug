@@ -1,0 +1,21 @@
+extends layout
+
+block content
+	h1=title
+
+	form(method='POST' action='')
+		if errors
+			ul.alert.alert-danger
+				for error in errors
+					li.mb-0!= error.msg
+		div.form-group
+			label.mt-3(for='first_name') #[h5 First Name:]
+			input#first_name.form-control(type='text' placeholder='First name (Christian) last' name='first_name' required='true' value=(undefined===author ? '' : author.first_name) )
+			label.mt-3(for='family_name') #[h5 Family Name:]
+			input#family_name.form-control(type='text' placeholder='Family name (surname)' name='family_name' required='true' value=(undefined===author ? '' : author.family_name))
+		div.form-group
+			label.mt-3(for='date_of_birth') #[h5 Date of birth:]
+			input#date_of_birth.form-control(type='date' name='date_of_birth' value=(undefined===author ? '' : author.date_of_birth_yyyy_mm_dd) )
+			label.mt-3(for='date_of_death') #[h5 Date of death:]
+			input#date_of_death.form-control(type='date' name='date_of_death' value=(undefined===author ? '' : author.date_of_death_yyyy_mm_dd) )
+		button.btn.btn-primary(type='submit') Submit
