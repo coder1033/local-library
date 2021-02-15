@@ -32,5 +32,15 @@ AuthorSchema.virtual("url").get(function () {
   return "/catalog/author/" + this._id;
 });
 
+// Virtual for bookinstance's date of birth in format 'YYYY-MM-DD'
+AuthorSchema.virtual("date_of_birth_yyyy_mm_dd").get(function () {
+  return DateTime.fromJSDate(this.date_of_birth).toISODate();
+});
+
+// Virtual for bookinstance's date of death in format 'YYYY-MM-DD'
+AuthorSchema.virtual("date_of_death_yyyy_mm_dd").get(function () {
+  return DateTime.fromJSDate(this.date_of_death).toISODate();
+});
+
 //Export model
 module.exports = mongoose.model("Author", AuthorSchema);
