@@ -2,17 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 // Require controller modules.
-const book_controller = require("../controllers/book-controller");
 const author_controller = require("../controllers/author-controller");
-const genre_controller = require("../controllers/genre-controller");
+const book_controller = require("../controllers/book-controller");
 const book_instance_controller = require("../controllers/book-instance-controller");
-const { routes } = require("../app");
+const genre_controller = require("../controllers/genre-controller");
 
 // Require validator modules.
-const genre_validator = require("../validators/genre-validator");
 const author_validator = require("../validators/author-validator");
 const book_validator = require("../validators/book-validator");
 const book_instance_validator = require("../validators/book-instance-validator");
+const genre_validator = require("../validators/genre-validator");
 
 /// BOOK ROUTES ///
 
