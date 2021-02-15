@@ -1,7 +1,10 @@
+// npm packages
 const async = require("async");
+const { validationResult } = require("express-validator");
+
+// local imports
 const Author = require("../models/author");
 const Book = require("../models/book");
-const { validationResult } = require("express-validator");
 
 // Display list of all Authors.
 exports.author_list = function (req, res, next) {

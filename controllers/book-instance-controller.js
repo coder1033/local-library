@@ -1,7 +1,10 @@
+// npm packages
 const async = require("async");
+const { validationResult } = require("express-validator");
+
+// local imports
 const Book = require("../models/book");
 const BookInstance = require("../models/bookinstance");
-const { validationResult } = require("express-validator");
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {

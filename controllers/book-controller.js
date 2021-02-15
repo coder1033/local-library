@@ -1,9 +1,12 @@
+// npm packages
 const async = require("async");
+const { validationResult } = require("express-validator");
+
+// local imports
 const Author = require("../models/author");
 const Book = require("../models/book");
 const BookInstance = require("../models/bookinstance");
 const Genre = require("../models/genre");
-const { validationResult } = require("express-validator");
 
 exports.index = function (req, res) {
   async.parallel(
